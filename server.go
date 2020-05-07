@@ -5,13 +5,14 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/marcosfdev/bibliotheque/dataloaders/"
 	"github.com/marcosfdev/bibliotheque/gqlgen"
 	"github.com/marcosfdev/bibliotheque/pg"
 )
 
 func main() {
 	// initialize the db
-	db, err := pg.Open("dbname=biblio_db sslmode=disable")
+	db, err := pg.Open("dbname=gqlgen_sqlc_example_db sslmode=disable")
 	if err != nil {
 		panic(err)
 	}
@@ -20,10 +21,15 @@ func main() {
 	// initialize the repository
 	repo := pg.NewRepository(db)
 
+	// initialize the dataloaders
+	dl := dataloaders.NewRetriever() // <- here we initialize the dataloader.Retriever
+
 	// configure the server
 	mux := http.NewServeMux()
 	mux.Handle("/", gqlgen.NewPlaygroundHandler("/query"))
-	mux.Handle("/query", gqlgen.NewHandler(repo))
+	dlMiddleware := dataloaders.Middleware(repo)     // <- here we initialize the middleware
+	queryHandler := gqlgen.NewHandler(repo, dl)      // <- use dataloader.Retriever here
+	mux.Handle("/query", dlMiddleware(queryHandler)) // <- use dataloader.Middleware here
 
 	// run the server
 	port := ":8080"

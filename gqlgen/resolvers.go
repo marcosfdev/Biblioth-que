@@ -200,3 +200,14 @@ func (r *queryResolver) Book(ctx context.Context, id int64) (*pg.Book, error) {
 func (r *queryResolver) Books(ctx context.Context) ([]pg.Book, error) {
 	return r.Repository.ListBooks(ctx)
 }
+
+// Resolver connects individual resolvers with the datalayer.
+type Resolver struct {
+	Repository  pg.Repository
+	DataLoaders dataloaders.Retriever
+}
+
+// Agent by Author
+func (r *authorResolver) Agent(ctx context.Context, obj *pg.Author) (*pg.Agent, error) {
+	return r.DataLoaders.Retrieve(ctx).AgentByAuthorID.Load(obj.ID)
+}

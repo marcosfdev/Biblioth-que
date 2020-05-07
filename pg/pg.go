@@ -33,6 +33,9 @@ type Repository interface {
 	GetBook(ctx context.Context, id int64) (Book, error)
 	ListBooks(ctx context.Context) ([]Book, error)
 	ListBooksByAuthorID(ctx context.Context, authorID int64) ([]Book, error)
+
+	// List Agents  by Author
+	ListAgentsByAuthorIDs(ctx context.Context, authorIDs []int64) ([]ListAgentsByAuthorIDsRow, error)
 }
 
 type repoSvc struct {
