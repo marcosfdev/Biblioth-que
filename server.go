@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/marcosfdev/bibliotheque/gqlgen"
-	"github.com/marcosfdev/bibliotheque/gqlgen/pg"
+	"github.com/marcosfdev/bibliotheque/pg"
 )
 
 func main() {
